@@ -1,0 +1,795 @@
+/* style.css */
+
+/* Reset CSS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: sans-serif;
+    line-height: 1.6;
+    background-color: #ffffff;
+    color: #333;
+    display: flex; /* Added for sticky footer */
+    flex-direction: column; /* Added for sticky footer */
+    min-height: 100vh; /* Added for sticky footer */
+}
+
+/* -------------------- Header -------------------- */
+header {
+    background: linear-gradient(135deg, #b2d8d8, #66b2b2, #008080);
+    padding: 15px 20px; /* Adjusted padding */
+    text-align: center;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    color: #fff;
+    position: relative; /* Needed for absolute positioned children */
+    z-index: 10;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2em; /* Slightly adjusted */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+    order: 1;
+    flex-grow: 1; /* Allow title to take space */
+    text-align: left; /* Align title left near logo */
+    margin-left: 15px;
+}
+header h1 a{ /* Ensure link inside h1 inherits color */
+    color: inherit;
+    text-decoration: none;
+}
+
+
+header a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 10px;
+    order: 2; /* Default order */
+}
+
+header a:hover {
+    text-decoration: underline;
+}
+header .trangchu{ /*Thêm class để phân biệt với các trang khác*/
+    /* display: none; /* Commented out - let's show it for consistency */
+    /* If hidden on index.html specifically, use JS or body class */
+}
+
+header img{
+    order: 0;
+    width: 100px; /* Adjusted default logo size */
+    height: 100px; /* Adjusted default logo size */
+    flex-shrink: 0; /* Prevent logo from shrinking */
+}
+
+header .search-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    order: 3; /* Search comes after nav links */
+    margin-left: auto; /* Push to the right */
+    flex-wrap: nowrap; /* Prevent wrapping by default */
+}
+
+header input[type="text"] {
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 200px; /* Default width */
+}
+
+header select {
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+header button[type="submit"] {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #008080;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+header button[type="submit"]:hover:not(:disabled) {
+    background-color: #006666;
+    color: #fff;
+}
+header button[type="submit"]:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+
+/* Navigation Links specific styling */
+header a.nav-link { /* Add a class to nav links if needed, or target directly */
+     /* Example: padding: 8px 12px; */
+}
+
+/* Liên kết đến trang giới thiệu (Example of a specific link) */
+header a[href="../../HTML/gioithieu.html"] {
+    /* background-color: #fff;
+    color: #008080; */ /* Keeping it consistent with other links */
+    padding: 8px 15px;
+    border-radius: 20px;
+    /* box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2); */
+    transition: background-color 0.3s ease, color 0.3s ease, text-decoration 0.3s ease;
+    border: 1px solid transparent; /* Add transparent border for layout consistency on hover */
+}
+
+header a[href="../../HTML/gioithieu.html"]:hover {
+    /* background-color: #008080;
+    color: #fff; */
+    text-decoration: underline;
+    border-color: #fff; /* Optional: add border on hover */
+}
+
+/* Login Button / User Icon Container */
+.btn-login,
+header .user-icon-container {
+    order: 4; /* Login/User icon is last */
+    margin-left: 15px; /* Space before login/user */
+    position: relative; /* Change from absolute to relative for flow */
+    top: auto; /* Reset positioning */
+    right: auto; /* Reset positioning */
+    z-index: 11;
+}
+
+.btn-login {
+    background-color: #fff;
+    color: #008080;
+    padding: 8px 15px;
+    border-radius: 20px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: inline-block; /* Ensure it behaves like a button */
+}
+
+.btn-login:hover {
+    background-color: #006666;
+    color: #fff;
+    text-decoration: none;
+}
+
+header .user-icon-container {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative; /* Needed for dropdown positioning */
+}
+
+header .user-icon-container .user-icon-button {
+    background-color: #fff;
+    color: #008080;
+    padding: 8px 10px;
+    border-radius: 50%;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+header .user-icon-container .user-icon-button i {
+    font-size: 1.4em;
+    line-height: 1;
+    display: block;
+}
+
+header .user-icon-container .user-icon-button:hover {
+    background-color: #006666;
+    color: #fff;
+}
+
+header .user-menu-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    min-width: 150px;
+    z-index: 100;
+    padding: 5px 0;
+}
+
+header .user-menu-dropdown.active {
+    display: block;
+}
+
+header .user-menu-dropdown a {
+    display: block;
+    padding: 10px 15px;
+    color: #333;
+    text-decoration: none;
+    font-size: 0.95em;
+    white-space: nowrap;
+    margin: 0;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+header .user-menu-dropdown a:hover {
+    background-color: #f5f5f5;
+    color: #008080;
+}
+
+header .user-menu-dropdown a#logout-link {
+    color: #c0392b;
+}
+header .user-menu-dropdown a#logout-link:hover {
+    color: white;
+    background-color: #e74c3c;
+}
+
+
+/* -------------------- END Header -------------------- */
+
+/* Main content */
+main {
+    padding: 20px;
+    flex-grow: 1; /* Added for sticky footer */
+}
+
+/* --- Slideshow --- */
+.slideshow-container {
+    max-width: 90%; /* Slightly wider */
+    position: relative;
+    margin: 30px auto;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 10px; /* Reduced padding */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.mySlides img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 6; /* Example aspect ratio for banners, adjust as needed */
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
+    border-radius: 6px;
+}
+
+.prev, .next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    transform: translateY(-50%);
+    padding: 10px 14px; /* Adjusted padding */
+    color: black;
+    font-weight: bold;
+    font-size: 16px; /* Adjusted font size */
+    transition: 0.6s ease;
+    border-radius: 50%;
+    user-select: none;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
+    background-color: rgba(255, 255, 255, 0.7);
+    z-index: 5;
+}
+.prev { left: 15px; } /* Slightly more inset */
+.next { right: 15px; } /* Slightly more inset */
+
+.prev:hover, .next:hover {
+    background-color: white;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+.dot {
+    cursor: pointer;
+    height: 10px; /* Slightly smaller */
+    width: 10px;
+    margin: 0 4px; /* Slightly more space */
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.6s ease;
+}
+
+.active, .dot:hover {
+    background-color: #717171;
+}
+
+.fade {
+    animation-name: fade;
+    animation-duration: 1.5s;
+}
+
+@keyframes fade {
+    from {opacity: .4}
+    to {opacity: 1}
+}
+/* --- End Slideshow --- */
+
+
+/* --- Section and Story Grid --- */
+section,
+.truyen-container { /* Added .truyen-container for search results */
+    margin: 30px auto;
+    max-width: 90%; /* Slightly wider */
+    display: block;
+    margin-bottom: 30px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+section h2,
+.truyen-container h2 {
+    font-size: 1.8em;
+    margin-bottom: 20px; /* Increased spacing */
+    padding-bottom: 10px; /* Increased spacing */
+    text-align: center;
+    border-bottom: 1px solid #eee; /* Add a subtle separator */
+}
+
+/* Story list container */
+section ul,
+#search-results-list {
+    list-style: none;
+    padding: 0;
+    display: grid; /* Using Grid for better control */
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Responsive columns */
+    gap: 20px;
+}
+
+/* Story list item */
+section li,
+#search-results-list li {
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    text-align: center;
+    border-radius: 4px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Prevent content overflow */
+}
+section li:hover,
+#search-results-list li:hover {
+     transform: translateY(-5px);
+     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+section li a,
+#search-results-list li a {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 10px; /* Add padding inside the link */
+}
+
+/* Story image */
+section li img,
+#search-results-list li img {
+    width: 100%;
+    height: auto;         /* REMOVED FIXED HEIGHT */
+    aspect-ratio: 2 / 3;  /* Maintain aspect ratio (adjust if needed) */
+    object-fit: cover;    /* Cover the area, might crop */
+    display: block;
+    border-radius: 4px;
+    margin-bottom: 10px; /* Space between image and text */
+    flex-shrink: 0;
+}
+
+/* Story title/text */
+section li a span, /* Target text directly if not in span */
+#search-results-list li a span {
+    margin-top: auto; /* Push text down */
+    font-size: 0.95em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* Limit lines using webkit properties */
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Show max 2 lines */
+    -webkit-box-orient: vertical;
+    line-height: 1.3; /* Adjust line height for better spacing */
+    min-height: 2.6em; /* Ensure space for 2 lines (line-height * lines) */
+}
+
+/* "Xem thêm" button */
+button#xem-them {
+    background-color: #008080;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: block;
+    margin: 30px auto; /* Increased margin */
+    transition: background-color 0.3s ease;
+}
+
+button#xem-them:hover {
+    background-color: #006666;
+}
+/* --- End Section and Story Grid --- */
+
+/* --- Search Results Specific --- */
+#search-results p.no-results {
+    width: 100%;
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    margin-top: 20px;
+    grid-column: 1 / -1; /* Span all columns if using grid */
+}
+/* --- End Search Results --- */
+
+/* --- Preloader --- */
+#preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+    opacity: 1;
+    visibility: visible;
+}
+#preloader.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #008080;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+/* --- End Preloader --- */
+
+
+/* --- Footer --- */
+footer {
+    background: linear-gradient(135deg, #008080, #46a7a7, #b2d8d8);
+    color: #fff;
+    padding: 30px 20px;
+    /* text-align: center; */ /* Removed center alignment for grid */
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    margin-top: auto; /* Added for sticky footer */
+}
+
+.footer-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Adjusted min width */
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    /* padding: 0 20px; */ /* Padding is on footer element now */
+}
+
+.footer-column {
+    text-align: left;
+}
+
+.footer-column h3 {
+    font-size: 1.1em; /* Adjusted size */
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    color: #eee;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
+}
+
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 15px 0; /* Adjusted margin */
+}
+
+.footer-column li {
+    margin-bottom: 8px;
+    /* Resetting styles inherited from story list */
+    width: auto; background-color: transparent; border: 0; padding: 0;
+    text-align: left; box-shadow: none; transition: none;
+}
+.footer-column li:hover { transform: none; box-shadow: none; }
+
+.footer-column a {
+    color: #ddd;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    margin: 0;
+    display: inline;
+}
+
+.footer-column a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+footer .social-icons {
+    margin-bottom: 20px;
+}
+footer .social-icons a {
+    display: inline-block;
+    margin-right: 10px;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+footer .social-icons a:hover {
+    opacity: 1;
+}
+footer .social-icons img {
+    width: 30px;
+    height: 30px;
+    vertical-align: middle;
+}
+
+.footer-column form {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.footer-column input[type="email"] {
+    padding: 10px;
+    border: 1px solid #777;
+    border-radius: 4px;
+    flex-grow: 1;
+    background-color: rgba(255, 255, 255, 0.1); /* More subtle background */
+    color: #fff; /* White text */
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.footer-column input::placeholder {
+    color: #ccc; /* Lighter placeholder */
+}
+
+.footer-column button[type="submit"] {
+    padding: 10px 15px;
+    background-color: #fff;
+    color: #008080;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    flex-shrink: 0;
+}
+
+.footer-column button[type="submit"]:hover {
+    background-color: #eee; /* Slightly different hover */
+    color: #006666;
+}
+
+footer > p:last-child { /* Copyright */
+    font-size: 0.9em;
+    margin-top: 30px;
+    padding-top: 20px; /* Add space above */
+    border-top: 1px solid rgba(255, 255, 255, 0.2); /* Separator */
+    color: #ddd;
+    text-align: center; /* Center copyright */
+}
+/* --- End Footer --- */
+
+
+/* -------------------- Responsive Adjustments -------------------- */
+
+/* Medium Devices (Tablets, etc.) */
+@media (max-width: 992px) {
+    header h1 {
+        font-size: 1.8em;
+    }
+    header input[type="text"] {
+        width: 150px; /* Slightly narrower */
+    }
+    section, .truyen-container {
+        max-width: 95%;
+    }
+    /* Story grid adjusts automatically due to auto-fit */
+}
+
+/* Small Devices (Portrait Tablets, Large Phones) */
+@media (max-width: 768px) {
+    header {
+        padding: 15px;
+        flex-direction: column;
+        align-items: stretch; /* Stretch items */
+    }
+    header img {
+        width: 80px;
+        height: 80px;
+        align-self: center; /* Center logo */
+        margin-bottom: 10px;
+    }
+    header h1 {
+        order: 1;
+        text-align: center;
+        margin-left: 0;
+        margin-bottom: 15px;
+        width: 100%;
+    }
+    /* Place nav links and search/login together */
+    .header-center-group { /* Wrap nav links and search */
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+       width: 100%;
+       order: 2;
+       margin-bottom: 15px;
+    }
+     header a.nav-link, header a[href="../../HTML/gioithieu.html"] { /* Target nav links */
+        margin: 5px 0;
+        display: block; /* Stack nav links */
+        text-align: center;
+    }
+
+    header .search-container {
+        order: 3;
+        width: 100%;
+        margin-left: 0;
+        justify-content: center;
+        flex-wrap: wrap; /* Allow search items to wrap */
+        margin-bottom: 15px;
+    }
+    header input[type="text"] {
+        width: calc(100% - 20px); /* Full width search */
+        max-width: 350px;
+    }
+    header select, header button[type="submit"] {
+        flex-grow: 1; /* Allow selects/button to share space */
+        min-width: 100px;
+    }
+
+    .btn-login, header .user-icon-container {
+       order: 4;
+       align-self: center; /* Center login/user button */
+       margin-left: 0;
+       margin-top: 10px;
+    }
+
+    .slideshow-container {
+        max-width: 95%;
+    }
+    .prev, .next {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+    .footer-container {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjust for smaller screens */
+        gap: 20px;
+    }
+}
+
+/* Extra Small Devices (Phones) */
+@media (max-width: 480px) {
+    header {
+        padding: 10px;
+        border-bottom-left-radius: 15px; /* Less pronounced radius */
+        border-bottom-right-radius: 15px;
+    }
+    header img {
+        width: 60px;
+        height: 60px;
+    }
+    header h1 {
+        font-size: 1.6em;
+    }
+    header .search-container {
+        flex-direction: column; /* Stack search items */
+        gap: 8px;
+    }
+     header input[type="text"], header select, header button[type="submit"] {
+        width: 90%;
+        max-width: 300px; /* Limit max width */
+        flex-grow: 0; /* Reset grow */
+    }
+    .btn-login {
+         padding: 6px 12px;
+         font-size: 0.9em;
+     }
+     header .user-icon-container .user-icon-button {
+         padding: 6px 8px;
+     }
+     header .user-icon-container .user-icon-button i {
+         font-size: 1.2em;
+     }
+     header .user-menu-dropdown {
+         min-width: 130px;
+     }
+
+    section, .truyen-container {
+        padding: 15px;
+        border-left: none;
+        border-right: none;
+        border-radius: 0;
+    }
+    section ul, #search-results-list {
+         grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* Adjust minmax for smaller items */
+         gap: 15px;
+    }
+
+     /* Single column story list on very small screens if desired */
+     /*
+     @media (max-width: 360px) {
+        section ul, #search-results-list {
+            grid-template-columns: 1fr;
+        }
+     }
+     */
+
+    .slideshow-container {
+        max-width: 100%;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 0;
+        border: 0;
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+    .mySlides img{
+      border-radius: 0;
+    }
+    .prev, .next {
+        display: none; /* Hide prev/next on smallest screens */
+    }
+    .dot, div[style="text-align:center"] { /* Hide dots */
+        display: none;
+    }
+    footer {
+         padding: 20px 15px;
+         border-top-left-radius: 15px;
+         border-top-right-radius: 15px;
+    }
+    .footer-container {
+        grid-template-columns: 1fr; /* Single column footer */
+        text-align: center;
+    }
+    .footer-column {
+        text-align: center;
+    }
+     .footer-column ul {
+        text-align: center;
+    }
+     .footer-column h3 {
+        text-align: center;
+    }
+    .footer-column form {
+        justify-content: center;
+    }
+     .footer-column input[type="email"] {
+         max-width: 250px;
+     }
+    footer .social-icons {
+        text-align: center;
+    }
+}

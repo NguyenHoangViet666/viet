@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="vi"> <!-- Thay đổi lang="vi" nếu muốn -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../CSS/login.css" />
+    <title>Đăng nhập / Đăng ký - BetoBook</title> <!-- Sửa title -->
+  </head>
+  <body>
+    <div class="container">
+      <!-- FORM ĐĂNG NHẬP -->
+      <div class="form-box login">
+        <!-- Sửa action="#" hoặc để trống vì xử lý bằng JS -->
+        <form action="#">
+          <h1>Đăng Nhập</h1>
+          <div class="input-box">
+            <!-- Thêm thuộc tính name="loginUsername" -->
+            <input type="text" placeholder="Username" required name="loginUsername" />
+            <i class="bx bxs-user"></i>
+          </div>
+          <div class="input-box">
+            <!-- Thêm thuộc tính name="loginPassword" -->
+            <input type="password" placeholder="Password" required name="loginPassword" />
+            <i class="bx bxs-lock-alt"></i>
+          </div>
+          <div class="forgot-link">
+            <a href="#">Quên mật khẩu?</a> <!-- Sửa href="#" -->
+          </div>
+          <!-- Sửa type="submit" -->
+          <button type="submit" class="btn">Đăng Nhập</button>
+          <!-- (Tùy chọn) Phần đăng nhập mạng xã hội -->
+          <!-- <p>hoặc đăng nhập với</p>
+          <div class="social-icons">
+            <a href="#"><i class="bx bxl-google"></i></a>
+            <a href="#"><i class="bx bxl-facebook"></i></a>
+            <a href="#"><i class="bx bxl-github"></i></a>
+            <a href="#"><i class="bx bxl-linkedin"></i></a>
+          </div> -->
+        </form>
+      </div>
+
+      <!-- FORM ĐĂNG KÝ -->
+      <div class="form-box register">
+         <!-- Sửa action="#" -->
+        <form action="#">
+          <h1>Đăng Ký</h1>
+          <div class="input-box">
+             <!-- Thêm thuộc tính name="registerUsername" -->
+            <input type="text" placeholder="Username" required name="registerUsername" />
+            <i class="bx bxs-user"></i>
+          </div>
+          <!-- BỎ QUA EMAIL TRONG PHIÊN BẢN NÀY (HOẶC THÊM XỬ LÝ JS) -->
+          <!-- <div class="input-box">
+            <input type="email" placeholder="Email" required name="registerEmail" />
+            <i class="bx bxs-envelope"></i>
+          </div> -->
+          <div class="input-box">
+             <!-- Thêm thuộc tính name="registerPassword" -->
+            <input type="password" placeholder="Password" required name="registerPassword" />
+            <i class="bx bxs-lock-alt"></i>
+          </div>
+          <!-- THÊM TRƯỜNG CONFIRM PASSWORD -->
+          <div class="input-box">
+            <input type="password" placeholder="Confirm Password" required name="confirmPassword" />
+            <i class="bx bxs-lock-alt"></i>
+          </div>
+          <!-- Sửa type="submit" -->
+          <button type="submit" class="btn">Đăng Ký</button>
+           <!-- (Tùy chọn) Phần đăng nhập mạng xã hội -->
+           <!-- <p>hoặc đăng ký với</p>
+          <div class="social-icons">
+            <a href="#"><i class="bx bxl-google"></i></a>
+            <a href="#"><i class="bx bxl-facebook"></i></a>
+            <a href="#"><i class="bx bxl-github"></i></a>
+            <a href="#"><i class="bx bxl-linkedin"></i></a>
+          </div> -->
+        </form>
+      </div>
+
+      <!-- KHỐI CHUYỂN ĐỔI -->
+      <div class="toggle-box">
+        <div class="toggle-panel toggle-left">
+          <h1>Xin chào!</h1> <!-- Sửa nội dung tiếng Việt -->
+          <p>Chưa có tài khoản?</p>
+          <button class="btn register-btn">Đăng Ký</button> <!-- Không cần type ở đây vì JS xử lý click -->
+        </div>
+        <div class="toggle-panel toggle-right">
+          <h1>Chào mừng trở lại!</h1>
+          <p>Đã có tài khoản?</p>
+          <button class="btn login-btn">Đăng Nhập</button> <!-- Không cần type -->
+        </div>
+      </div>
+    </div>
+
+    <!-- NHÚNG SCRIPT THEO ĐÚNG THỨ TỰ -->
+    <!-- 1. Nhúng file chứa dữ liệu người dùng (GIẢ LẬP) -->
+    <script src="../JS/users.js"></script>
+    <!-- 2. Nhúng file xử lý logic cho trang login -->
+    <script src="../JS/login.js"></script>
+    <!-- KHÔNG NHÚNG script.js (dành cho index.html) ở đây -->
+    <!-- <script src="../JS/script.js"></script> -->
+  </body>
+</html>
