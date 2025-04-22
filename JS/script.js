@@ -94,126 +94,156 @@
         console.error('[BetoBook Script v3] Không tìm thấy placeholder #navigation.');
     }
 
-    /**
+        /**
      * Thiết lập các tương tác cho thanh điều hướng sau khi đã tải xong HTML.
      */
     function setupNavigationInteractions() {
         const navContainer = document.getElementById('navigation');
         if (!navContainer) {
-             console.error("[BetoBook Script v3] Không tìm thấy navContainer sau khi fetch.");
+             console.error("[BetoBook Script] Không tìm thấy navContainer sau khi fetch.");
             return;
         }
 
+        // --- SỬA ĐƯỜNG DẪN LOGO SAU KHI TẢI NAVIGATION ---
+        const logoImg = navContainer.querySelector('header img[alt="Logo BetoBook"]'); // Tìm ảnh logo
+        if (logoImg) {
+            // Lấy đường dẫn hiện tại trong thẻ img (ví dụ: ../Ảnh/logo1.png)
+            const currentLogoSrc = logoImg.getAttribute('src');
+            let correctLogoSrc = '';
+
+            // Tính toán đường dẫn ĐÚNG dựa trên trang hiện tại (BASE_PATH)
+            // Chúng ta muốn đường dẫn cuối cùng là tương đối từ gốc + Ảnh/logo1.png
+            correctLogoSrc = BASE_PATH + 'Ảnh/logo1.png';
+
+            // Chỉ cập nhật nếu đường dẫn tính toán khác đường dẫn hiện tại
+            // (Tránh cập nhật không cần thiết và potential loop/vấn đề khác)
+            // Cần chuẩn hóa đường dẫn trước khi so sánh (ví dụ loại bỏ './')
+            const normalizedCurrent = currentLogoSrc.startsWith('./') ? currentLogoSrc.substring(2) : currentLogoSrc;
+            const normalizedCorrect = correctLogoSrc.startsWith('./') ? correctLogoSrc.substring(2) : correctLogoSrc;
+
+            // So sánh đường dẫn đã chuẩn hóa
+             if (normalizedCurrent !== normalizedCorrect) {
+                  console.log(`[BetoBook Script] Sửa đường dẫn logo từ "${currentLogoSrc}" thành "${correctLogoSrc}" (Base path: ${BASE_PATH})`);
+                  logoImg.setAttribute('src', correctLogoSrc);
+             } else {
+                 console.log(`[BetoBook Script] Đường dẫn logo "${currentLogoSrc}" đã đúng.`);
+             }
+
+        } else {
+            console.warn('[BetoBook Script] Không tìm thấy ảnh logo trong navigation để sửa đường dẫn.');
+        }
+        // --- KẾT THÚC SỬA ĐƯỜNG DẪN LOGO ---
+
+
+        // --- Tính toán đường dẫn cơ sở cho các link ---
         const linkBasePath = BASE_PATH;
 
         // --- Nút Đăng nhập / Icon Người dùng ---
-        const loginButtonContainer = navContainer.querySelector(".btn-login") || navContainer.querySelector(".user-icon-container");
-        if (loginButtonContainer) {
-            const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-            const userPagePath = linkBasePath + 'HTML/user.html';
-            const loginPagePath = linkBasePath + 'HTML/login.html';
-            const homePagePath = linkBasePath + 'index.html';
+        // ... (Giữ nguyên phần còn lại của hàm setupNavigationInteractions) ...
+         const loginButtonContainer = navContainer.querySelector(".btn-login") || navContainer.querySelector(".user-icon-container");
+         if (loginButtonContainer) {
+             const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+             const userPagePath = linkBasePath + 'HTML/user.html';
+             const loginPagePath = linkBasePath + 'HTML/login.html';
+             const homePagePath = linkBasePath + 'index.html';
 
-            console.log(`[BetoBook Script v3] Link paths: user=${userPagePath}, login=${loginPagePath}, home=${homePagePath}`);
+             console.log(`[BetoBook Script] Link paths: user=${userPagePath}, login=${loginPagePath}, home=${homePagePath}`);
 
-            if (isLoggedIn) {
-                // ... (Logic hiển thị icon user và dropdown như cũ) ...
-                const userName = localStorage.getItem("userName") || "User";
-                const isAdmin = localStorage.getItem("isAdmin") === "true";
-                loginButtonContainer.innerHTML = '';
-                loginButtonContainer.className = 'user-icon-container';
-                loginButtonContainer.removeAttribute('href');
-                const iconButton = document.createElement('span');
-                iconButton.className = 'user-icon-button';
-                iconButton.innerHTML = '<i class="bx bxs-user"></i>';
-                iconButton.title = `${userName} ${isAdmin ? '(Admin)' : ''}`;
-                const dropdownMenu = document.createElement('div');
-                dropdownMenu.className = 'user-menu-dropdown';
-                dropdownMenu.innerHTML = `
-                    <a href="${userPagePath}">Tài khoản</a>
-                    <a href="#" id="logout-link">Đăng xuất</a>
-                `;
-                loginButtonContainer.appendChild(iconButton);
-                loginButtonContainer.appendChild(dropdownMenu);
-                loginButtonContainer.addEventListener('click', function(event) {
-                    if (!event.target.closest('.user-menu-dropdown a')) {
-                        event.preventDefault(); event.stopPropagation();
-                        closeOtherDropdowns(dropdownMenu);
-                        dropdownMenu.classList.toggle('active');
-                    }
-                });
-                const logoutLink = dropdownMenu.querySelector('#logout-link');
-                if (logoutLink) {
-                    logoutLink.addEventListener('click', function(event) {
-                        event.preventDefault();
-                        localStorage.removeItem('isLoggedIn'); localStorage.removeItem('userName'); localStorage.removeItem('isAdmin');
-                        alert('Bạn đã đăng xuất thành công.'); window.location.href = "/viet/index.html";
-                    });
-                }
-            } else {
-                // ... (Logic hiển thị nút Đăng nhập như cũ) ...
-                 loginButtonContainer.className = 'btn-login';
-                 loginButtonContainer.textContent = 'Đăng Nhập';
-                 loginButtonContainer.href = loginPagePath;
-            }
-        } else {
-            console.warn('[BetoBook Script v3] Không tìm thấy nút đăng nhập/icon user trong navigation.');
-        }
+             if (isLoggedIn) {
+                 const userName = localStorage.getItem("userName") || "User";
+                 const isAdmin = localStorage.getItem("isAdmin") === "true";
+                 loginButtonContainer.innerHTML = '';
+                 loginButtonContainer.className = 'user-icon-container';
+                 loginButtonContainer.removeAttribute('href');
+                 const iconButton = document.createElement('span');
+                 iconButton.className = 'user-icon-button';
+                 iconButton.innerHTML = '<i class="bx bxs-user"></i>';
+                 iconButton.title = `${userName} ${isAdmin ? '(Admin)' : ''}`;
+                 const dropdownMenu = document.createElement('div');
+                 dropdownMenu.className = 'user-menu-dropdown';
+                 dropdownMenu.innerHTML = `
+                     <a href="${userPagePath}">Tài khoản</a>
+                     <a href="#" id="logout-link">Đăng xuất</a>
+                 `;
+                 loginButtonContainer.appendChild(iconButton);
+                 loginButtonContainer.appendChild(dropdownMenu);
+                 loginButtonContainer.addEventListener('click', function(event) {
+                     if (!event.target.closest('.user-menu-dropdown a')) {
+                         event.preventDefault(); event.stopPropagation();
+                         closeOtherDropdowns(dropdownMenu);
+                         dropdownMenu.classList.toggle('active');
+                     }
+                 });
+                 const logoutLink = dropdownMenu.querySelector('#logout-link');
+                 if (logoutLink) {
+                     logoutLink.addEventListener('click', function(event) {
+                         event.preventDefault();
+                         localStorage.removeItem('isLoggedIn'); localStorage.removeItem('userName'); localStorage.removeItem('isAdmin');
+                         alert('Bạn đã đăng xuất thành công.'); window.location.href = homePagePath;
+                     });
+                 }
+             } else {
+                  loginButtonContainer.className = 'btn-login';
+                  loginButtonContainer.textContent = 'Đăng Nhập';
+                  loginButtonContainer.href = loginPagePath;
+             }
+         } else {
+             console.warn('[BetoBook Script] Không tìm thấy nút đăng nhập/icon user trong navigation.');
+         }
 
-        // --- Dropdown Thể loại ---
-        const theLoaiSelect = navContainer.querySelector('#the-loai');
-        if (theLoaiSelect) {
-            theLoaiSelect.addEventListener('change', function() {
-                if (this.value && this.value !== "") {
-                    const targetPath = linkBasePath + 'HTML/' + this.value;
-                    console.log(`[BetoBook Script v3] Chuyển đến thể loại: ${targetPath}`);
-                    window.location.href = targetPath;
-                }
-            });
-        } else {
-             console.warn('[BetoBook Script v3] Không tìm thấy dropdown #the-loai.');
-        }
-
-        // --- Dropdown Loại truyện ---
-        const loaiTruyenSelect = navContainer.querySelector('.search-container select[name="loaitruyen"]');
-        if (loaiTruyenSelect) {
-             loaiTruyenSelect.addEventListener('change', function() {
+         // --- Dropdown Thể loại ---
+         const theLoaiSelect = navContainer.querySelector('#the-loai');
+         if (theLoaiSelect) {
+             theLoaiSelect.addEventListener('change', function() {
                  if (this.value && this.value !== "") {
                      const targetPath = linkBasePath + 'HTML/' + this.value;
-                     console.log(`[BetoBook Script v3] Chuyển đến loại truyện: ${targetPath}`);
+                     console.log(`[BetoBook Script] Chuyển đến thể loại: ${targetPath}`);
                      window.location.href = targetPath;
                  }
              });
-        } else {
-            console.warn('[BetoBook Script v3] Không tìm thấy dropdown loại truyện.');
-        }
+         } else {
+              console.warn('[BetoBook Script] Không tìm thấy dropdown #the-loai.');
+         }
 
+         // --- Dropdown Loại truyện ---
+         const loaiTruyenSelect = navContainer.querySelector('.search-container select[name="loaitruyen"]');
+         if (loaiTruyenSelect) {
+              loaiTruyenSelect.addEventListener('change', function() {
+                  if (this.value && this.value !== "") {
+                      const targetPath = linkBasePath + 'HTML/' + this.value;
+                      console.log(`[BetoBook Script] Chuyển đến loại truyện: ${targetPath}`);
+                      window.location.href = targetPath;
+                  }
+              });
+         } else {
+             console.warn('[BetoBook Script] Không tìm thấy dropdown loại truyện.');
+         }
 
-        // --- Form Tìm kiếm ---
-        const searchForm = navContainer.querySelector('.search-container form');
-        const searchInput = navContainer.querySelector('.search-container input[name="q"]');
-        const searchButton = navContainer.querySelector('.search-container button[type="submit"]');
+         // --- Form Tìm kiếm ---
+         const searchForm = navContainer.querySelector('.search-container form');
+         const searchInput = navContainer.querySelector('.search-container input[name="q"]');
+         const searchButton = navContainer.querySelector('.search-container button[type="submit"]');
 
-        if (searchForm && searchInput && searchButton) {
-            // ... (Logic disable nút và xử lý submit như cũ) ...
-            const updateSearchButtonState = () => { searchButton.disabled = searchInput.value.trim() === ''; };
-            searchInput.addEventListener('input', updateSearchButtonState);
-            updateSearchButtonState();
-            searchForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                const searchTerm = searchInput.value.trim();
-                if (!searchTerm) { searchInput.focus(); return; }
-                const targetAction = searchForm.getAttribute('action');
-                if (!targetAction) { alert("Lỗi: Không thể xác định trang kết quả tìm kiếm."); return; }
-                const searchResultPageUrl = linkBasePath + 'HTML/' + targetAction;
-                const finalSearchUrl = `${searchResultPageUrl}?q=${encodeURIComponent(searchTerm)}`;
-                console.log(`[BetoBook Script v3] Tìm kiếm với từ khóa "${searchTerm}", chuyển đến: ${finalSearchUrl}`);
-                window.location.href = finalSearchUrl;
-            });
-        } else {
-            console.error('[BetoBook Script v3] Không tìm thấy các thành phần của form tìm kiếm.');
-        }
-    }
+         if (searchForm && searchInput && searchButton) {
+             const updateSearchButtonState = () => { searchButton.disabled = searchInput.value.trim() === ''; };
+             searchInput.addEventListener('input', updateSearchButtonState);
+             updateSearchButtonState();
+             searchForm.addEventListener('submit', function(event) {
+                 event.preventDefault();
+                 const searchTerm = searchInput.value.trim();
+                 if (!searchTerm) { searchInput.focus(); return; }
+                 const targetAction = searchForm.getAttribute('action');
+                 if (!targetAction) { alert("Lỗi: Không thể xác định trang kết quả tìm kiếm."); return; }
+                 const searchResultPageUrl = linkBasePath + 'HTML/' + targetAction;
+                 const finalSearchUrl = `${searchResultPageUrl}?q=${encodeURIComponent(searchTerm)}`;
+                 console.log(`[BetoBook Script] Tìm kiếm với từ khóa "${searchTerm}", chuyển đến: ${finalSearchUrl}`);
+                 window.location.href = finalSearchUrl;
+             });
+         } else {
+             console.error('[BetoBook Script] Không tìm thấy các thành phần của form tìm kiếm.');
+         }
+
+    } // Kết thúc hàm setupNavigationInteractions
 
     // --- LOGIC SLIDESHOW ---
     let slideIndex = 1;
