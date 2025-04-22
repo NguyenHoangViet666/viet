@@ -1,130 +1,190 @@
-// --- START OF FILE script.js ---
+(function() {
 
-(function() { // Sử dụng IIFE để tránh biến toàn cục không cần thiết
-
-    // --- Phần 0: Các đường dẫn cơ sở và Helper ---
-    // Giả định file JS này có thể được tải từ trang chủ (trong HTML/) hoặc trang con (sâu hơn)
-    const getCurrentBasePath = () => {
+    // --- NEW: Function to calculate the correct base path ---
+    function calculateBasePath() {
         const path = window.location.pathname;
-        // Ví dụ: Nếu trang là /DEMOBTL/HTML/index.html -> ../../
-        // Ví dụ: Nếu trang là /DEMOBTL/TRUYEN/abc/story.html -> ../../../
-        // Cách đơn giản hơn: Giả định cấu trúc cố định
-        // Nếu ở trong thư mục HTML: '../../' để lên thư mục gốc rồi vào nơi khác
-        // Nếu ở trong thư mục TRUYEN/xxx: '../../../'
-        // --> Sử dụng cách tiếp cận dựa trên vị trí của navigation.html là an toàn hơn
-        // Nếu index.html ở /DEMOBTL/HTML/ và navigation.html ở /DEMOBTL/HTML/
-        // thì từ index.html, đường dẫn đến nav là 'navigation.html'
-        // Nếu trang truyện ở /DEMOBTL/TRUYEN/TRUYEN01/trang_truyen_1.html
-        // thì đường dẫn đến nav là '../../HTML/navigation.html'
-        if (window.location.pathname.includes('/TRUYEN/')) {
-            return '../../'; // Từ trang truyện lên 2 cấp
-        } else if (window.location.pathname.includes('/HTML/')) {
-             // Nếu là index.html hoặc trang khác trong HTML/
-             // Cần phân biệt index.html với các trang khác như gioithieu.html
-             if (window.location.pathname.endsWith('/') || window.location.pathname.endsWith('index.html')) {
-                 // Từ index.html trong HTML/ đến navigation.html trong HTML/ là cùng cấp
-                 // Tuy nhiên, để đến các file Ảnh hoặc quay về gốc thì vẫn cần '../'
-                 // --> Cần cẩn thận hơn
-                 // --> Giải pháp: Luôn dùng đường dẫn tuyệt đối ảo hoặc tương đối từ gốc nếu có thể
-                 // --> Giữ nguyên logic cũ: xác định base path dựa trên trang hiện tại là đủ dùng
-                 return '../../'; // Giả định trang HTML/ cũng cần lên 2 cấp để tới gốc DEMOBTL
-             } else {
-                 // Các trang khác trong HTML/ như gioithieu.html, login.html
-                 return '../../'; // Cũng lên 2 cấp
-             }
+        // Check if we are at the root level (e.g., /, /index.html, /repository-name/, /repository-name/index.html)
+        // Handles common GitHub Pages scenarios.
+        const pathSegments = path.split('/').filter(segment => segment !== ''); // Get non-empty segments
+
+        if (path.endsWith('/') || path.endsWith('/index.html')) {
+            // If it ends with / or /index.html
+            if (pathSegments.length === 0) { // True root: http://domain.com/
+                 return './'; // Use relative paths from root
+            } else if (pathSegments.length === 1 && path.includes('.')) { // Might be index.html at root
+                 return './';
+            } else if (pathSegments.length === 1 && !path.includes('.')) { // Likely /repository-name/
+                 // GitHub Pages repo subfolder case requires slightly different handling for JS/CSS etc.
+                 // But for fetching HTML/nav.html, this relative path works from the repo root index.
+                 return './';
+            } else if (pathSegments.length === 2 && pathSegments[1] === 'index.html') { // Likely /repository-name/index.html
+                 return './';
+            }
         }
-        // Mặc định hoặc trường hợp không xác định rõ
-        return '../../';
-    };
 
-    const BASE_PATH = getCurrentBasePath(); // Ví dụ: '../../'
-    const HTML_FOLDER = 'HTML/';
-    const COMMON_HTML_PREFIX = BASE_PATH + HTML_FOLDER; // Ví dụ: '../../HTML/'
+        // Check if inside /HTML/ subdirectory
+        if (path.includes('/HTML/')) {
+            return '../'; // Go up one level from HTML to the root
+        }
 
-    function isHomePage() {
-        const path = window.location.pathname;
-        // Điều chỉnh lại cho chính xác với cấu trúc của bạn
-        // Ví dụ: chỉ trang index.html trong thư mục HTML là trang chủ
-        return path.endsWith('/HTML/index.html') || path.endsWith('/HTML/');
-        // Hoặc nếu trang chủ ở gốc: return path === '/' || path.endsWith('/index.html');
+        // Check if inside /TRUYEN/ subdirectory (adjust depth if needed)
+        if (path.includes('/TRUYEN/')) {
+            // Count segments after TRUYEN to determine depth, might need adjustment
+            // Simple case: Assume /TRUYEN/TRUYENXX/page.html -> needs ../../
+            return '../../';
+        }
+
+        // Default fallback (might need adjustment based on your exact structure)
+        console.warn("Could not determine base path reliably for:", path, "Defaulting to './'");
+        return './'; // Default to relative from current if unsure
     }
 
-    console.log("Script.js: Base path determined as:", BASE_PATH);
-    console.log("Script.js: Is homepage?", isHomePage());
+    const BASE_PATH = calculateBasePath(); // Use the calculated base path
+    console.log("Calculated BASE_PATH:", BASE_PATH);
 
-    // --- Phần 1: Xử lý trang chủ (Xem thêm, Slideshow) ---
+    // --- Helper Function to create absolute URLs (Relative to root) ---
+    // Needed for navigation links etc. when called from different depths
+    function getCorrectPath(relativePathFromRoot) {
+        // If BASE_PATH is already going up levels, adjust the final path
+        if (BASE_PATH === '../') { // Inside HTML
+            return relativePathFromRoot; // Path is already relative from HTML
+        } else if (BASE_PATH === '../../') { // Inside TRUYEN
+            return '../' + relativePathFromRoot; // Go up one more level
+        } else { // At Root (BASE_PATH is './')
+             // Need to prepend HTML/ for subpages, or keep root paths as is
+             if(relativePathFromRoot.startsWith('HTML/') || relativePathFromRoot.startsWith('JS/') || relativePathFromRoot.startsWith('CSS/') || relativePathFromRoot.startsWith('Ảnh/') || relativePathFromRoot === 'index.html') {
+                 return relativePathFromRoot; // Already correct from root
+             } else {
+                 // Assume it's a page inside HTML/ if not explicitly rooted
+                 // This might need refinement depending on link structure
+                 return 'HTML/' + relativePathFromRoot;
+             }
+        }
+    }
+     // Simplified version for paths relative *from the script's current context*
+     function resolvePath(relativePath) {
+         // If the relative path already accounts for going up (like ../../HTML/...)
+         if (relativePath.startsWith('../')) {
+            // Let's assume it's calculated correctly elsewhere for deep paths
+            return relativePath;
+         }
+         // For simple paths like 'HTML/navigation.html' or 'CSS/style.css'
+         // prepend the base path if needed
+         if (BASE_PATH === './') {
+             return relativePath; // Already relative to root
+         } else {
+             // For ../ or ../../, combine them.
+             // Example: BASE_PATH = ../, relativePath = HTML/file.html -> ../HTML/file.html (correct)
+             // Example: BASE_PATH = ../, relativePath = navigation.html -> ../navigation.html (INCORRECT for nav)
+             // This needs careful handling based on *what* you are resolving.
+
+             // Let's try a specific approach for known files like navigation
+             if (relativePath === 'HTML/navigation.html' && BASE_PATH !== './') {
+                 return BASE_PATH + relativePath; // e.g. ../HTML/navigation.html
+             }
+              // Default attempt: Combine base and relative
+             // This might be wrong in some cases, requires testing.
+             // return BASE_PATH + relativePath;
+
+             // More robust: Use URL constructor if possible (browser only)
+             try {
+                let baseUrl = window.location.href;
+                // If we are in HTML/, go up for the base
+                if(BASE_PATH === '../'){
+                    baseUrl = new URL('..', window.location.href).href;
+                } else if (BASE_PATH === '../../') {
+                    baseUrl = new URL('../..', window.location.href).href;
+                }
+                return new URL(relativePath, baseUrl).pathname;
+             } catch (e) {
+                 console.error("URL constructor failed, falling back to simple path join:", e);
+                 return BASE_PATH + relativePath; // Fallback
+             }
+
+         }
+     }
+
+
+    // --- Check if on Home Page ---
+    function isHomePage() {
+        const path = window.location.pathname;
+        // Check for root index.html or just the root path /
+        // Or /repo-name/ or /repo-name/index.html for GitHub Pages
+        return path === '/' || path.endsWith('/index.html') || /^\/[^\/.]+\/?$/.test(path) || /^\/[^\/.]+\/index\.html$/.test(path);
+     }
+     console.log("Is Home Page?", isHomePage());
+
+
+    // --- "Xem thêm" Button Logic ---
     if (isHomePage()) {
-        console.log("Script.js: Setting up homepage features...");
-        // 1.1 Xử lý nút Xem thêm
         const xemThemButton = document.getElementById('xem-them');
         const truyenAnSection = document.getElementById('truyen-an');
         if (xemThemButton && truyenAnSection) {
             xemThemButton.addEventListener('click', function() {
-                truyenAnSection.style.display = 'block'; // Hoặc 'grid', 'flex'
+                console.log("Xem thêm button clicked"); // Debug
+                truyenAnSection.style.display = 'block';
                 this.style.display = 'none';
-                console.log("Script.js: Show hidden stories.");
             });
         } else {
-            console.warn("Script.js: 'xem-them' button or 'truyen-an' section not found on homepage.");
+            console.warn("Xem thêm button or section not found on home page."); // More informative warning
         }
-
-        // 1.2 Slideshow sẽ được thiết lập ở cuối file trong listener 'load'
     }
 
-    // --- Phần 2: Tải và xử lý Navigation ---
+    // --- Navigation Loading ---
     const navigationPlaceholder = document.getElementById('navigation');
     if (navigationPlaceholder) {
-        // Xác định đường dẫn đến navigation.html TỪ trang hiện tại
-        let navPath = '';
-        if (isHomePage()) {
-            // Nếu index.html và navigation.html cùng trong thư mục HTML/
-            navPath = 'navigation.html';
-        } else if (window.location.pathname.includes('/HTML/')) {
-             // Các trang khác trong HTML/ (login, gioithieu...) cũng cùng cấp với navigation.html
-             navPath = 'navigation.html';
-        }
-         else {
-            // Các trang sâu hơn (như trang truyện)
-            navPath = COMMON_HTML_PREFIX + 'navigation.html'; // Ví dụ: '../../HTML/navigation.html'
-        }
-        console.log("Script.js: Fetching navigation from:", navPath);
+        // Determine the correct path to navigation.html relative TO THE CURRENT FILE (script.js)
+        // This path is *always* the same relative to script.js, regardless of where index.html is.
+        // Assuming script.js is in JS/, and navigation.html is in HTML/
+        const navFileRelativePath = '../HTML/navigation.html'; // Path from JS/script.js to HTML/navigation.html
 
-        fetch(navPath)
+        console.log("Attempting to fetch navigation from:", navFileRelativePath);
+
+        fetch(navFileRelativePath)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}, tried to fetch: ${navPath}`);
+                    throw new Error(`HTTP error! status: ${response.status}, tried to fetch: ${navFileRelativePath}`);
                 }
                 return response.text();
             })
             .then(data => {
+                console.log("Navigation HTML fetched successfully.");
                 navigationPlaceholder.innerHTML = data;
-                console.log("Script.js: Navigation HTML injected.");
 
-                // --- Bắt đầu xử lý nội dung bên trong navigation ---
+                // --- Re-attach logic that depends on navigation elements ---
+                // Note: Paths inside the *fetched* navigation.html are relative to *its* location (HTML/)
+                // But paths we set *here* in JS need to be relative to the *current page*.
 
-                // 2.1 Xử lý trạng thái đăng nhập & User Icon/Menu
                 const loginButtonContainer = navigationPlaceholder.querySelector(".btn-login") || navigationPlaceholder.querySelector(".user-icon-container");
                 if (loginButtonContainer) {
                     const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
                     const userName = localStorage.getItem("userName");
-                    // Xác định đường dẫn TỪ trang hiện tại đến các trang user.html, login.html, index.html
-                    let userPagePath = COMMON_HTML_PREFIX + 'user.html';
-                    let loginPagePath = COMMON_HTML_PREFIX + 'login.html';
-                    let homePagePath = COMMON_HTML_PREFIX + 'index.html';
-                     // Điều chỉnh nếu trang hiện tại đã ở trong HTML/
-                    if (window.location.pathname.includes('/HTML/')) {
-                       userPagePath = 'user.html';
-                       loginPagePath = 'login.html';
-                       homePagePath = 'index.html';
+
+                    // Calculate paths relative to the *current page* using BASE_PATH
+                    let userPagePath, loginPagePath, homePagePath;
+
+                    if (isHomePage()) { // We are at the root
+                        userPagePath = 'HTML/user.html';
+                        loginPagePath = 'HTML/login.html';
+                        homePagePath = 'index.html'; // Link to root index
+                    } else if (BASE_PATH === '../') { // We are inside HTML/
+                        userPagePath = 'user.html';   // Already in HTML
+                        loginPagePath = 'login.html';  // Already in HTML
+                        homePagePath = '../index.html'; // Go up to root index
+                    } else { // Assume deeper path like TRUYEN/
+                        // Adjust based on actual depth if needed
+                        userPagePath = '../../HTML/user.html';
+                        loginPagePath = '../../HTML/login.html';
+                        homePagePath = '../../index.html';
                     }
+                     console.log("Paths set for user:", { userPagePath, loginPagePath, homePagePath });
 
 
                     if (isLoggedIn) {
-                        // Đã đăng nhập: Hiển thị icon và dropdown
-                        console.log("Script.js: User logged in. Creating user icon menu.");
-                        loginButtonContainer.innerHTML = ''; // Xóa text "Đăng Nhập" cũ
-                        loginButtonContainer.className = 'user-icon-container'; // Đảm bảo đúng class
-                        loginButtonContainer.removeAttribute('href'); // Không cần href cho container
+                        // (Keep the existing logic for displaying user icon and dropdown)
+                        loginButtonContainer.innerHTML = '';
+                        loginButtonContainer.className = 'user-icon-container';
+                        loginButtonContainer.removeAttribute('href');
 
                         const iconButton = document.createElement('span');
                         iconButton.className = 'user-icon-button';
@@ -132,6 +192,7 @@
 
                         const dropdownMenu = document.createElement('div');
                         dropdownMenu.className = 'user-menu-dropdown';
+                        // Use the calculated paths
                         dropdownMenu.innerHTML = `
                             <a href="${userPagePath}">Tài khoản</a>
                             <a href="#" id="logout-link">Đăng xuất</a>
@@ -140,9 +201,8 @@
                         loginButtonContainer.appendChild(iconButton);
                         loginButtonContainer.appendChild(dropdownMenu);
 
-                        // Listener mở/đóng dropdown
                         loginButtonContainer.addEventListener('click', function(event) {
-                            if (!event.target.closest('.user-menu-dropdown a')) {
+                             if (!event.target.closest('.user-menu-dropdown a')) {
                                 event.preventDefault();
                                 event.stopPropagation();
                                 closeOtherDropdowns(dropdownMenu);
@@ -150,156 +210,143 @@
                             }
                         });
 
-                        // Listener đăng xuất
                         const logoutLink = dropdownMenu.querySelector('#logout-link');
                         if (logoutLink) {
                             logoutLink.addEventListener('click', function(event) {
                                 event.preventDefault();
                                 localStorage.removeItem('isLoggedIn');
                                 localStorage.removeItem('userName');
-                                localStorage.removeItem('isAdmin'); // Quan trọng: Xóa cả trạng thái admin
-                                console.log("Script.js: User logged out.");
+                                localStorage.removeItem('isAdmin');
                                 alert('Bạn đã đăng xuất thành công.');
-                                window.location.href = homePagePath; // Về trang chủ
+                                window.location.href = homePagePath; // Use calculated home path
                             });
                         }
-
                     } else {
-                        // Chưa đăng nhập: Hiển thị nút "Đăng Nhập"
-                        console.log("Script.js: User not logged in. Displaying login button.");
-                        loginButtonContainer.className = 'btn-login'; // Đảm bảo đúng class
+                        // (Keep the existing logic for displaying login button)
+                        loginButtonContainer.className = 'btn-login';
                         loginButtonContainer.textContent = 'Đăng Nhập';
-                        loginButtonContainer.href = loginPagePath; // Đặt link đến trang đăng nhập
+                        loginButtonContainer.href = loginPagePath; // Use calculated login path
                     }
                 } else {
-                    console.warn("Script.js: Login button/User icon container not found in fetched navigation.");
+                    console.error("Could not find login button/user icon container in fetched navigation.");
                 }
 
-                // 2.2 Gắn sự kiện CHANGE cho các Select để điều hướng trang
+                // --- Search and Category Dropdown Logic (Check paths inside navigation.html itself) ---
+                // The JS logic here just handles interaction, the *values* in the <option> tags
+                // inside navigation.html must point correctly *relative to the HTML folder*.
+
                 const theLoaiSelect = navigationPlaceholder.querySelector('#the-loai');
                 if (theLoaiSelect) {
                     theLoaiSelect.addEventListener('change', function() {
-                        if (this.value) { // Giá trị là URL trang thể loại
-                            console.log("Script.js: Genre changed, navigating to:", this.value);
-                            window.location.href = this.value;
+                        if (this.value) {
+                            // Value should be like "hanh-dong.html". Construct full path *relative to current page*
+                            let targetPath;
+                            if (isHomePage()){
+                                targetPath = 'HTML/' + this.value;
+                            } else if (BASE_PATH === '../') { // Inside HTML/
+                                targetPath = this.value; // Already relative within HTML/
+                            } else { // Deeper
+                                targetPath = BASE_PATH + 'HTML/' + this.value; // e.g., ../../HTML/hanh-dong.html
+                            }
+                            console.log("Navigating to category:", targetPath);
+                            window.location.href = targetPath;
                         }
                     });
                 } else {
-                    console.warn("Script.js: Genre select (#the-loai) not found.");
+                     console.warn("Category select '#the-loai' not found in navigation.");
                 }
 
                 const loaiTruyenSelect = navigationPlaceholder.querySelector('.search-container select[name="loaitruyen"]');
-                if (loaiTruyenSelect) {
-                    loaiTruyenSelect.addEventListener('change', function() {
-                        if (this.value) { // Giá trị là URL trang loại truyện
-                            console.log("Script.js: Story type changed, navigating to:", this.value);
-                            window.location.href = this.value;
-                        }
-                    });
-                } else {
-                    console.warn("Script.js: Story type select ([name='loaitruyen']) not found.");
-                }
+                 if (loaiTruyenSelect) {
+                     loaiTruyenSelect.addEventListener('change', function() {
+                         if (this.value) {
+                              // Value should be like "oneshot.html". Construct full path *relative to current page*
+                             let targetPath;
+                             if (isHomePage()){
+                                 targetPath = 'HTML/' + this.value;
+                             } else if (BASE_PATH === '../') { // Inside HTML/
+                                 targetPath = this.value; // Already relative within HTML/
+                             } else { // Deeper
+                                 targetPath = BASE_PATH + 'HTML/' + this.value; // e.g., ../../HTML/oneshot.html
+                             }
+                             console.log("Navigating to type:", targetPath);
+                             window.location.href = targetPath;
+                         }
+                     });
+                 } else {
+                     console.warn("Story type select not found in navigation.");
+                 }
 
-                // 2.3 Xử lý SUBMIT cho Form Tìm kiếm (Chỉ dùng ô input)
                 const searchForm = navigationPlaceholder.querySelector('.search-container form');
                 const searchInput = navigationPlaceholder.querySelector('.search-container input[name="q"]');
                 const searchButton = navigationPlaceholder.querySelector('.search-container button[type="submit"]');
 
                 if (searchForm && searchInput && searchButton) {
-                    // Bật/tắt nút tìm dựa trên nội dung input
-                    const updateSearchButtonState = () => {
-                        searchButton.disabled = searchInput.value.trim() === '';
-                    };
-                    searchInput.addEventListener('input', updateSearchButtonState);
-                    updateSearchButtonState(); // Cập nhật trạng thái ban đầu
+                     const updateSearchButtonState = () => {
+                         searchButton.disabled = searchInput.value.trim() === '';
+                     };
+                     searchInput.addEventListener('input', updateSearchButtonState);
+                     updateSearchButtonState();
 
-                    // Listener cho sự kiện SUBMIT
                     searchForm.addEventListener('submit', function(event) {
-                        event.preventDefault(); // Ngăn form gửi đi theo cách mặc định
-
+                        event.preventDefault();
                         const searchTerm = searchInput.value.trim();
                         if (!searchTerm) {
-                            console.log("Script.js: Search term is empty, submit prevented.");
                             searchInput.focus();
-                            return; // Không làm gì nếu ô tìm kiếm trống
+                            return;
                         }
 
-                        // Lấy đường dẫn trang kết quả từ action của form
-                        // *** Quan trọng: Đảm bảo 'action' trong navigation.html là đúng ***
-                        // Ví dụ: action="../../HTML/search-results.html"
+                        // Action should be "search-results.html" (relative to HTML/)
                         const targetAction = searchForm.getAttribute('action');
-                         if (!targetAction) {
-                            console.error("Script.js: Search form is missing 'action' attribute!");
+                        if (!targetAction) {
                             alert("Lỗi: Không thể xác định trang kết quả tìm kiếm.");
                             return;
                         }
 
-                         // Xác định đường dẫn cuối cùng đến trang kết quả TỪ trang hiện tại
-                         let searchResultPageUrl;
-                         if (targetAction.startsWith('../')) {
-                             // Nếu action là tương đối (ví dụ: ../../HTML/search-results.html)
-                             // Chúng ta cần tính toán dựa trên vị trí hiện tại, nhưng thường action đã đúng sẵn
-                             // Chỉ cần đảm bảo action trong navigation.html là đúng từ vị trí của navigation.html
-                             // Ví dụ: Nếu nav ở HTML/, action='search-results.html'
-                             // Nếu nav ở gốc, action='HTML/search-results.html'
-                             // --> Giả định action trong navigation.html đã đúng
-                             // --> Cần phân giải nó dựa trên vị trí trang hiện tại
-                             // Cách đơn giản nhất: nếu navPath được tính đúng, thì action cũng phải đúng tương đối
-                             // Ví dụ nếu đang ở trang truyện, navPath là ../../HTML/navigation.html
-                             // action trong nav là ../../HTML/search-results.html => giữ nguyên là đúng
-                             searchResultPageUrl = targetAction;
-
-                             // Tuy nhiên, để chắc chắn hơn, ta có thể xây dựng từ BASE_PATH
-                             // searchResultPageUrl = BASE_PATH + 'HTML/search-results.html';
-                             // -> Cách này có thể không linh hoạt bằng việc tin vào action trong HTML
-
-                             // Kiểm tra lại logic action của bạn trong navigation.html
-                             // Nó phải đúng tương đối từ VỊ TRÍ CỦA navigation.html
-                             // Ví dụ: Nếu navigation.html ở thư mục gốc, action nên là "HTML/search-results.html"
-                             // Nếu navigation.html ở thư mục HTML, action nên là "search-results.html"
-
-                             // Giữ nguyên cách dùng action trực tiếp, nhưng log ra để kiểm tra
-                             console.log("Script.js: Using form action directly:", targetAction);
-                             searchResultPageUrl = targetAction;
-
-                         } else {
-                             // Nếu action là tuyệt đối hoặc chỉ là tên file (cùng thư mục)
-                             searchResultPageUrl = targetAction;
+                        // Construct full path to search results relative to *current page*
+                        let searchResultPageUrl;
+                         if (isHomePage()){
+                            searchResultPageUrl = 'HTML/' + targetAction;
+                         } else if (BASE_PATH === '../') { // Inside HTML/
+                            searchResultPageUrl = targetAction; // Already relative within HTML/
+                         } else { // Deeper
+                            searchResultPageUrl = BASE_PATH + 'HTML/' + targetAction;
                          }
 
-
-                        // Tạo URL cuối cùng chỉ với tham số 'q'
                         const finalSearchUrl = `${searchResultPageUrl}?q=${encodeURIComponent(searchTerm)}`;
-
-                        console.log("Script.js: Search submitted. Navigating to:", finalSearchUrl);
-                        window.location.href = finalSearchUrl; // Điều hướng thủ công
+                        console.log("Navigating to search results:", finalSearchUrl);
+                        window.location.href = finalSearchUrl;
                     });
                 } else {
-                    console.warn("Script.js: Search form components (form, input[q], button) not all found.");
+                    console.error("Search form elements not found in navigation.");
                 }
-
-                console.log("Script.js: Navigation setup complete.");
-                // --- Kết thúc xử lý nội dung bên trong navigation ---
 
             })
             .catch(error => {
-                console.error('Script.js: Error fetching or processing navigation:', error);
-                navigationPlaceholder.innerHTML = `<p style="color:red; text-align:center; border: 1px solid red; padding: 10px;">Lỗi tải thanh điều hướng: ${error.message}. Vui lòng kiểm tra Console (F12).</p>`;
+                console.error("Error loading navigation:", error); // Log the error
+                navigationPlaceholder.innerHTML = `<p style="color:red; text-align:center; border: 1px solid red; padding: 10px;">Lỗi tải thanh điều hướng: ${error.message}. Vui lòng kiểm tra Console (F12) và đường dẫn fetch.</p>`;
             });
     } else {
-        console.error("Script.js: Critical Error! Navigation placeholder <div id='navigation'> not found in this HTML.");
+        console.error("Navigation placeholder '#navigation' not found.");
     }
 
-    // --- Phần 3: Slideshow (Chỉ chạy trên trang chủ) ---
+    // --- Slideshow Logic ---
     let slideIndex = 1;
     let slideInterval;
-    const slideshowContainer = document.querySelector('.slideshow-container');
+    const slideshowContainer = document.querySelector('.slideshow-container'); // Find it globally
 
     function showSlides(n) {
-        if (!slideshowContainer) return; // Chỉ chạy nếu có container
+        // Check if slideshowContainer exists *before* using it
+        if (!slideshowContainer) {
+            // console.warn("Slideshow container not found when trying to show slides.");
+            return;
+        }
         let slides = slideshowContainer.getElementsByClassName("mySlides");
-        let dots = slideshowContainer.getElementsByClassName("dot");
-        if (slides.length === 0) return; // Không có slide thì dừng
+        let dots = document.getElementsByClassName("dot"); // Dots might be outside container
+        if (slides.length === 0) {
+            // console.warn("No slides found inside the slideshow container.");
+            return; // Exit if no slides
+        }
 
         if (n > slides.length) { slideIndex = 1 }
         if (n < 1) { slideIndex = slides.length }
@@ -307,20 +354,31 @@
         for (let i = 0; i < slides.length; i++) {
             slides[i].style.display = "none";
         }
-        for (let i = 0; i < dots.length; i++) {
-            dots[i].className = dots[i].className.replace(" active", "");
+        // Check if dots exist before trying to modify
+        if (dots && dots.length > 0) {
+             for (let i = 0; i < dots.length; i++) {
+                dots[i].className = dots[i].className.replace(" active", "");
+            }
+            // Check index bounds for dots
+             if (dots[slideIndex - 1]) {
+                dots[slideIndex - 1].className += " active";
+            }
         }
 
-        slides[slideIndex - 1].style.display = "block";
-        if (dots[slideIndex - 1]) {
-             dots[slideIndex - 1].className += " active";
+
+        // Check index bounds for slides
+        if (slides[slideIndex - 1]) {
+             slides[slideIndex - 1].style.display = "block";
+        } else {
+             console.error(`Slide index ${slideIndex-1} is out of bounds.`);
         }
+
     }
 
     function plusSlides(n) {
-        stopSlideShow();
+        stopSlideShow(); // Stop first
         showSlides(slideIndex += n);
-        startSlideShow();
+        startSlideShow(); // Restart
     }
 
     function currentSlide(n) {
@@ -330,50 +388,63 @@
     }
 
     function startSlideShow() {
-        if (!slideshowContainer || slideshowContainer.getElementsByClassName("mySlides").length === 0) return;
-        stopSlideShow(); // Xóa interval cũ trước khi tạo mới
+        // Check container and slides again before starting interval
+         if (!slideshowContainer || slideshowContainer.getElementsByClassName("mySlides").length === 0) {
+              console.warn("Cannot start slideshow - container or slides missing.");
+              return;
+          }
+        stopSlideShow(); // Clear any existing interval
+        console.log("Starting slideshow timer"); // Debug
         slideInterval = setInterval(() => {
+            // console.log("Slideshow timer tick"); // Debug timer
             showSlides(slideIndex += 1);
-        }, 3000); // 3 giây
+        }, 3000); // 3 seconds interval
     }
 
     function stopSlideShow() {
+         console.log("Stopping slideshow timer"); // Debug
         clearInterval(slideInterval);
     }
 
-    // Gán hàm vào window để HTML có thể gọi qua onclick
+    // Make slideshow functions globally accessible for onclick handlers
     window.plusSlides = plusSlides;
     window.currentSlide = currentSlide;
 
-    // Khởi chạy slideshow và xử lý hover sau khi trang tải xong
+    // --- Window Load Event ---
     window.addEventListener('load', () => {
+        console.log("Window loaded."); // Debug
+
+        // Start slideshow only if on home page AND container exists
         if (isHomePage() && slideshowContainer) {
-            console.log("Script.js: Initializing slideshow on homepage.");
-            showSlides(slideIndex); // Hiển thị slide đầu
-            startSlideShow(); // Bắt đầu tự động chạy
+            console.log("Initializing slideshow on home page."); // Debug
+            showSlides(slideIndex); // Show initial slide
+            startSlideShow();       // Start automatic cycling
+            // Add hover effects
             slideshowContainer.addEventListener('mouseenter', stopSlideShow);
             slideshowContainer.addEventListener('mouseleave', startSlideShow);
+        } else if (isHomePage()) {
+             console.warn("Slideshow container not found on home page during load event.");
         }
 
-        // --- Phần 4: Preloader (Sau khi trang load xong) ---
+
+        // Preloader logic (should be less affected by paths, but good to keep)
         const preloader = document.getElementById('preloader');
         if (preloader) {
-            console.log("Script.js: Hiding preloader.");
+            console.log("Hiding preloader."); // Debug
             preloader.style.opacity = '0';
-            // Nên dùng event 'transitionend' thay vì setTimeout để đảm bảo khớp CSS
             preloader.addEventListener('transitionend', () => {
                 preloader.style.display = 'none';
-            }, { once: true }); // Chỉ chạy 1 lần
-             // Fallback nếu không có transition hoặc trình duyệt cũ
+            }, { once: true });
+            // Fallback timeout
              setTimeout(() => {
-                 if (preloader.style.display !== 'none'){ // Kiểm tra nếu chưa ẩn
+                 if (preloader.style.display !== 'none'){
                      preloader.style.display = 'none';
                  }
-             }, 500); // Giữ lại fallback 500ms
+             }, 600); // Slightly longer timeout just in case
         }
     });
 
-    // --- Phần 5: Helper đóng dropdown và Listener toàn cục ---
+    // --- Helper to close user dropdown ---
     function closeOtherDropdowns(currentDropdown = null) {
         const allActiveDropdowns = document.querySelectorAll('.user-menu-dropdown.active');
         allActiveDropdowns.forEach(dropdown => {
@@ -383,7 +454,7 @@
         });
     }
 
-    // Đóng dropdown khi click ra ngoài
+    // Close dropdown if clicking outside
     document.addEventListener('click', function(event) {
         const clickedInsideUserIcon = event.target.closest('.user-icon-container');
         if (!clickedInsideUserIcon) {
@@ -391,8 +462,6 @@
         }
     });
 
-    console.log("Script.js: Execution finished.");
+    console.log("script.js executed."); // Final debug message
 
-})(); // Kết thúc IIFE
-
-// --- END OF FILE script.js ---
+})(); // End of IIFE
