@@ -67,10 +67,10 @@
     const navigationPlaceholder = document.getElementById('navigation');
     if (navigationPlaceholder) {
         // Đường dẫn tương đối từ file script (JS/) đến file navigation (HTML/)
-        const navFileRelativePath = '../HTML/navigation.html';
-        console.log(`[BetoBook Script] Đang tải navigation từ: ${navFileRelativePath}`);
+        const navPathFromRoot = 'HTML/navigation.html';
+        console.log(`[BetoBook Script] Đang thử tải navigation từ gốc: ${navPathFromRoot}`);
 
-        fetch(navFileRelativePath)
+        fetch(navPathFromRoot)
             .then(response => {
                 if (!response.ok) {
                     // Ném lỗi rõ ràng hơn
