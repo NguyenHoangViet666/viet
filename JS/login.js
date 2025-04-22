@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             // ------------------------------------
 
-            window.location.href = "index.html"; // Chuyển hướng sau khi xử lý xong localStorage
+            window.location.href = "/viet/index.html"; // Chuyển hướng sau khi xử lý xong localStorage
 
         } else {
             alert("Tên đăng nhập hoặc mật khẩu không đúng!");
