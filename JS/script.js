@@ -147,7 +147,7 @@
                     logoutLink.addEventListener('click', function(event) {
                         event.preventDefault();
                         localStorage.removeItem('isLoggedIn'); localStorage.removeItem('userName'); localStorage.removeItem('isAdmin');
-                        alert('Bạn đã đăng xuất thành công.'); window.location.href = homePagePath;
+                        alert('Bạn đã đăng xuất thành công.'); window.location.href = "/viet/index.html";
                     });
                 }
             } else {
