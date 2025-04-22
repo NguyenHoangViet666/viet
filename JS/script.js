@@ -134,6 +134,27 @@
         }
         // --- KẾT THÚC SỬA ĐƯỜNG DẪN LOGO ---
 
+        const titleLink = navContainer.querySelector('header h1 a');
+        if (titleLink) {
+            const currentTitleHref = titleLink.getAttribute('href'); // Ví dụ: ../index.html
+            // Đường dẫn đúng đến trang chủ LUÔN là BASE_PATH + 'index.html'
+            const correctTitleHref = BASE_PATH + 'index.html';
+
+            // Chuẩn hóa để so sánh (xóa './')
+            const normalizedCurrentTitle = currentTitleHref ? (currentTitleHref.startsWith('./') ? currentTitleHref.substring(2) : currentTitleHref) : '';
+            const normalizedCorrectTitle = correctTitleHref.startsWith('./') ? correctTitleHref.substring(2) : correctTitleHref;
+
+             if (normalizedCurrentTitle !== normalizedCorrectTitle) {
+                  console.log(`[BetoBook Script] Sửa đường dẫn link title từ "${currentTitleHref}" thành "${correctTitleHref}"`);
+                  titleLink.setAttribute('href', correctTitleHref);
+             } else {
+                 console.log(`[BetoBook Script] Đường dẫn link title "${currentTitleHref}" đã đúng.`);
+             }
+
+        } else {
+            console.warn('[BetoBook Script] Không tìm thấy link title H1 trong navigation để sửa đường dẫn.');
+        }
+
 
         // --- Tính toán đường dẫn cơ sở cho các link ---
         const linkBasePath = BASE_PATH;
