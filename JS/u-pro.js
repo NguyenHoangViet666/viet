@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.removeItem('isAdmin');
             console.log("Đã xóa trạng thái Admin (nếu có) khỏi localStorage.");
             alert('Bạn đã đăng xuất thành công.');
-            window.location.href = 'index.html';
+            window.location.href = '../index.html';
         });
     } else {
         console.error("Không tìm thấy phần tử #logout-button.");
