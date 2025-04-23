@@ -1,7 +1,8 @@
+// --- START OF FILE u-pro.js ---
+
 document.addEventListener('DOMContentLoaded', () => {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
     if (isLoggedIn !== 'true') {
-        console.warn("Người dùng chưa đăng nhập. Chuyển hướng đến login.html");
         alert("Vui lòng đăng nhập để truy cập trang cá nhân.");
         window.location.href = 'login.html';
         return;
@@ -52,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 list = JSON.parse(storedJson);
                  if (!Array.isArray(list)) list = [];
             } catch (error) {
-                console.error(`Lỗi phân tích cú pháp ${key}:`, error);
                  list = [];
             }
         }
@@ -75,7 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 { id: 'user003', username: 'test_user', email: 'test@sample.org', isAdmin: false, createdAt: Date.now() - 10000000 },
             ];
             saveStoredList(ADMIN_USERS_KEY, sampleUsers);
-            console.log("Initialized sample admin users in localStorage.");
         }
         if (!localStorage.getItem(ADMIN_STORIES_KEY)) {
             const sampleStories = [
@@ -84,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 { id: 'truyen_03', title: 'Truyện Demo Khác', author: 'Tác giả Demo', genre: 'Hành động', status: 'Đang tiến hành', chapterCount: 15, url: '#' },
             ];
             saveStoredList(ADMIN_STORIES_KEY, sampleStories);
-            console.log("Initialized sample admin stories in localStorage.");
         }
     }
     if(isAdmin) initializeAdminData();
@@ -105,7 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                <a href="${url}" title="ID: ${storyId}">${title}</a>`;
                     html += `</li>`;
                 } else {
-                    console.warn("Mục đã lưu không hợp lệ:", item);
                     html += `<li>Mục không hợp lệ.</li>`;
                 }
             });
@@ -132,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                <a href="${url}" title="ID: ${storyId}">${title}</a>`;
                     html += `</li>`;
                 } else {
-                     console.warn("Mục đã thích không hợp lệ:", item);
                     html += `<li>Mục không hợp lệ.</li>`;
                 }
             });
@@ -158,17 +154,17 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'update-profile':
                  html = `<h2><i class='bx bx-user'></i> Cập nhật hồ sơ</h2>
                          <form id="update-profile-form">
-                           <div class="form-group"> <label for="profile-email">Email</label> <input type="email" id="profile-email" value="${localStorage.getItem('userEmail') || }" disabled></div>
-                           <div class="form-group"> <label for="profile-username">Tên hiển thị</label> <input type="text" id="profile-username" value="${storedUsername || ''}"></div>
-                           <div class="form-group"> <label for="profile-avatar">Ảnh đại diện</label> <input type="file" id="profile-avatar" accept="image/*" disabled></div>
+                           <div class="form-group"> <label for="profile-email">Email</label> <input type="email" id="profile-email" value="${localStorage.getItem('userEmail') || ''}" disabled></div>
+                           <div class="form-group"> <label for="profile-username">Tên hiển thị</label> <input type="text" id="profile-username" value="${storedUsername || ''}"> </div>
+                           <div class="form-group"> <label for="profile-avatar">Ảnh đại diện</label> <input type="file" id="profile-avatar" accept="image/*" disabled> </div>
                            <button type="submit" disabled>Lưu thay đổi</button>
                          </form>`;
                  break;
             case 'notifications':
                  html = `<h2><i class='bx bx-bell'></i> Thông báo</h2>
                          <form id="notifications-form">
-                            <div class="form-group"> <label> <input type="checkbox" name="email-new-chapter"> Nhận email khi có chương mới</label> </div>
-                            <div class="form-group"> <label> <input type="checkbox" name="email-updates"> Nhận email về cập nhật</label> </div>
+                            <div class="form-group"> <label> <input type="checkbox" name="email-new-chapter"> Nhận email khi có chương mới </label> </div>
+                            <div class="form-group"> <label> <input type="checkbox" name="email-updates"> Nhận email về cập nhật </label> </div>
                             <button type="submit" disabled>Lưu cài đặt</button>
                          </form>`;
                  break;
@@ -180,8 +176,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function getAdminManagementHTML() {
         let html = `
             <h2><i class='bx bxs-shield-alt-2'></i> Quản lý (Admin)</h2>
-            <p><strong>Lưu ý:</strong> Đây là giao diện quản trị <strong>mô phỏng</strong> sử dụng dữ liệu tạm thời trên trình duyệt (localStorage). Các thay đổi (thêm, sửa, xóa) chỉ có tác dụng trên trình duyệt này và sẽ mất nếu bộ nhớ bị xóa. Chức năng thực tế yêu cầu Backend.</p>
 
+            <!-- === User Management Section === -->
             <div class="admin-section user-management" style="margin-bottom: 40px;">
                 <h3><i class='bx bxs-user-account'></i> Quản lý Người dùng</h3>
                 <div class="admin-actions">
@@ -204,7 +200,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="form-group">
                         <label for="user-form-password">Mật khẩu:</label>
                         <input type="password" id="user-form-password">
-                        <small id="user-form-password-note">Để trống nếu không muốn thay đổi khi sửa.</small>
                     </div>
                     <div class="form-group">
                         <label for="user-form-isAdmin">Vai trò:</label>
@@ -234,6 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </table>
             </div>
 
+            <!-- === Story Management Section === -->
             <div class="admin-section story-management">
                 <h3><i class='bx bxs-book-content'></i> Quản lý Truyện</h3>
                  <div class="admin-actions">
@@ -245,7 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
                  <form id="admin-story-form" class="admin-form">
                     <input type="hidden" id="story-edit-id">
                     <h4><span id="story-form-title">Thêm truyện mới</span></h4>
-                    <div class="form-group"> <label for="story-form-title">Tên truyện:</label> <input type="text" id="story-form-title-input" required> </div>
+                    <div class="form-group"> <label for="story-form-title-input">Tên truyện:</label> <input type="text" id="story-form-title-input" required> </div>
                     <div class="form-group"> <label for="story-form-author">Tác giả:</label> <input type="text" id="story-form-author"> </div>
                     <div class="form-group"> <label for="story-form-genre">Thể loại:</label> <input type="text" id="story-form-genre" placeholder="Ví dụ: Tình cảm, Hành động"> </div>
                     <div class="form-group"> <label for="story-form-status">Tình trạng:</label>
@@ -333,7 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>
                     <button class="admin-edit-story-btn" data-story-id="${story.id}" title="Sửa"><i class='bx bx-edit'></i></button>
                     <button class="admin-delete-story-btn" data-story-id="${story.id}" title="Xóa"><i class='bx bx-trash'></i></button>
-                    <button disabled title="Quản lý chương (Cần Backend)"><i class='bx bx-list-ul'></i></button>
+                    <button disabled title="Quản lý chương"><i class='bx bx-list-ul'></i></button>
                 </td>
             `;
             storyListBody.appendChild(row);
@@ -342,10 +338,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateMainContent(sectionId) {
-        if (!mainContentArea) { console.error("Không tìm thấy khu vực .main-content"); return; }
+        if (!mainContentArea) { return; }
 
         let contentHTML = '';
-        console.log(`Updating content for section: ${sectionId}`);
 
         switch (sectionId) {
             case 'saved-stories': contentHTML = getSavedStoriesHTML(); break;
@@ -369,8 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (sectionId === 'saved-stories') contentHTML = getSavedStoriesHTML();
                 else if (sectionId === 'liked-stories') contentHTML = getLikedStoriesHTML();
                 else {
-                    console.warn(`Section ID không xác định: ${sectionId}, hiển thị trang chào mừng.`);
-                    contentHTML = `<h2>Chào mừng ${storedUsername || 'bạn'}!`;
+                    contentHTML = `<h2>Chào mừng ${storedUsername || 'bạn'}!</h2><p>Chọn một mục từ menu bên trái.</p>`;
                 }
         }
 
@@ -393,12 +387,9 @@ document.addEventListener('DOMContentLoaded', () => {
              if (form && !form.dataset.listenerAttached) {
                  form.addEventListener('submit', (e) => {
                      e.preventDefault();
-                     alert('');
+                     // No alert needed as buttons are disabled
                  });
                  form.dataset.listenerAttached = 'true';
-                 console.log(`Attached submit listener to form ${formId}`);
-             } else if (!form) {
-                 console.warn(`Không tìm thấy form với ID: ${formId} để gắn listener.`);
              }
          }
     }
@@ -441,14 +432,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const addUserBtn = document.getElementById('admin-user-add-btn');
         const userForm = document.getElementById('admin-user-form');
         const userFormTitle = document.getElementById('user-form-title');
-        const userFormPasswordNote = document.getElementById('user-form-password-note');
+        const userFormPasswordEl = document.getElementById('user-form-password');
         if (addUserBtn && userForm && !addUserBtn.dataset.listenerAttached) {
             addUserBtn.addEventListener('click', () => {
                 userForm.reset();
                 document.getElementById('user-edit-id').value = '';
                 userFormTitle.textContent = 'Thêm người dùng mới';
-                userFormPasswordNote.style.display = 'none';
-                 document.getElementById('user-form-password').required = true;
+                 if(userFormPasswordEl) userFormPasswordEl.required = true;
                 userForm.style.display = 'block';
             });
             addUserBtn.dataset.listenerAttached = 'true';
@@ -482,7 +472,6 @@ document.addEventListener('DOMContentLoaded', () => {
             storyFormCancelBtn.addEventListener('click', () => storyForm.style.display = 'none');
             storyForm.dataset.listenerAttached = 'true';
         }
-        console.log("Attached general admin action listeners.");
     }
 
     function attachAdminUserActionListeners() {
@@ -550,14 +539,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 users[userIndex].email = email;
                 users[userIndex].isAdmin = isAdminRole;
                 if (password) {
-                     users[userIndex].password_demo = password;
-                     console.warn("Saving password in plain text. DO NOT do this in production!");
+                     users[userIndex].password_demo = password; // Still storing plain text for demo
                 }
-                 console.log("Updating user:", users[userIndex]);
-            } else {
-                console.error("Không tìm thấy user để cập nhật:", userId);
-                alert("Lỗi: Không tìm thấy người dùng để cập nhật.");
-                return;
             }
         } else {
             if (!password) {
@@ -569,10 +552,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 username: username,
                 email: email,
                 isAdmin: isAdminRole,
-                password_demo: password,
+                password_demo: password, // Still storing plain text for demo
                 createdAt: Date.now()
             };
-             console.log("Adding new user:", newUser);
             users.push(newUser);
         }
 
@@ -587,6 +569,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const userId = e.currentTarget.getAttribute('data-user-id');
         const users = getStoredList(ADMIN_USERS_KEY);
         const user = users.find(u => u.id === userId);
+        const passwordInput = document.getElementById('user-form-password');
 
         if (user) {
             const form = document.getElementById('admin-user-form');
@@ -595,13 +578,11 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('user-form-username').value = user.username;
             document.getElementById('user-form-email').value = user.email;
             document.getElementById('user-form-isAdmin').value = user.isAdmin.toString();
-            document.getElementById('user-form-password').value = '';
-            document.getElementById('user-form-password').required = false;
-            document.getElementById('user-form-password-note').style.display = 'block';
+            if(passwordInput) {
+                passwordInput.value = '';
+                passwordInput.required = false; // Password not required when editing
+            }
             form.style.display = 'block';
-        } else {
-            console.error("Không tìm thấy user để sửa:", userId);
-            alert("Lỗi: Không tìm thấy người dùng để sửa.");
         }
     }
 
@@ -612,7 +593,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const updatedUsers = users.filter(u => u.id !== userId);
             saveStoredList(ADMIN_USERS_KEY, updatedUsers);
             renderUserList(updatedUsers);
-            alert("Đã xóa người dùng (mô phỏng).");
+            alert("Đã xóa người dùng.");
         }
     }
 
@@ -630,9 +611,6 @@ document.addEventListener('DOMContentLoaded', () => {
                  renderUserList(users);
                  alert("Đã đổi vai trò người dùng.");
              }
-         } else {
-             console.error("Không tìm thấy user để đổi vai trò:", userId);
-             alert("Lỗi: Không tìm thấy người dùng để đổi vai trò.");
          }
      }
 
@@ -645,6 +623,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const status = document.getElementById('story-form-status').value;
         const url = document.getElementById('story-form-url').value.trim();
         const chapterCount = parseInt(document.getElementById('story-form-chapterCount').value, 10) || 0;
+
 
         if (!title) {
             alert("Vui lòng nhập tên truyện.");
@@ -660,18 +639,12 @@ document.addEventListener('DOMContentLoaded', () => {
                      ...stories[storyIndex],
                      title, author, genre, status, url, chapterCount
                  };
-                 console.log("Updating story:", stories[storyIndex]);
-             } else {
-                 console.error("Không tìm thấy truyện để cập nhật:", storyId);
-                 alert("Lỗi: Không tìm thấy truyện để cập nhật.");
-                 return;
              }
         } else {
             const newStory = {
                 id: 'story' + Date.now(),
                 title, author, genre, status, url, chapterCount
             };
-            console.log("Adding new story:", newStory);
             stories.push(newStory);
         }
 
@@ -698,20 +671,17 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('story-form-url').value = story.url || '';
             document.getElementById('story-form-chapterCount').value = story.chapterCount || 0;
             form.style.display = 'block';
-        } else {
-            console.error("Không tìm thấy truyện để sửa:", storyId);
-            alert("Lỗi: Không tìm thấy truyện để sửa.");
         }
     }
 
     function handleDeleteStoryClick(e) {
         const storyId = e.currentTarget.getAttribute('data-story-id');
-        if (confirm(`Bạn có chắc muốn xóa truyện ID: ${storyId} khỏi hệ thống không? (Thao tác mô phỏng)`)) {
+        if (confirm(`Bạn có chắc muốn xóa truyện ID: ${storyId} khỏi hệ thống không?`)) {
              let stories = getStoredList(ADMIN_STORIES_KEY);
              const updatedStories = stories.filter(s => s.id !== storyId);
              saveStoredList(ADMIN_STORIES_KEY, updatedStories);
              renderStoryList(updatedStories);
-             alert("Đã xóa truyện (mô phỏng).");
+             alert("Đã xóa truyện.");
         }
     }
 
@@ -731,11 +701,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     let initialSection = window.location.hash.substring(1);
-    if (!initialSection || initialSection === '#') {
-        initialSection = 'saved-stories';
-    }
+    if (!initialSection || initialSection === '#') initialSection = 'saved-stories';
     updateMainContent(initialSection);
-
     const activeLink = document.querySelector(`.nav-section ul li a[data-section="${initialSection}"]`);
     if (activeLink) {
          document.querySelectorAll('.nav-section ul li a[data-section]').forEach(l => l.classList.remove('active'));
@@ -745,6 +712,6 @@ document.addEventListener('DOMContentLoaded', () => {
          if(defaultLink) defaultLink.classList.add('active');
     }
 
-    console.log("u-pro.js loaded and interactions enabled.");
-
 });
+
+// --- END OF FILE u-pro.js ---
