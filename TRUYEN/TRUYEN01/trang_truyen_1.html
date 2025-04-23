@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<!-- đầu -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5 cm trên giây - BetoBook</title>
+    <link rel="stylesheet" href="../../CSS/style_trang_truyen.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<!-- cuối đầu -->
+
+<!-- thân -->
+<body>
+    <!-- thanh điều hướng -->
+    <div id="navigation"></div>
+    <!-- cuối thanh điều hướng -->
+
+    <!-- nội dung chính -->
+    <main>
+        <!-- khu vực thông tin truyện -->
+        <section class="truyen-container"
+                 data-story-id="truyen_01"
+                 data-story-url="../TRUYEN/TRUYEN01/trang_truyen_1.html">
+
+            <!-- đầu truyện (ảnh, thông tin) -->
+            <div class="truyen-header">
+                <img src="../../Ảnh/bia_truyen_1.jpg" alt="Bìa truyện 1" class="truyen-bia">
+                <!-- thông tin chi tiết -->
+                <div class="truyen-info">
+                    <h1>5 cm trên giây</h1>
+                    <p><strong>Tác giả:</strong> Shinkai Makoto </p>
+                    <p><strong>Loại truyện:</strong> <span class="loai-truyen"><a href="../../HTML/oneshot.html">Oneshot</a></span></p>
+                    <p><strong>Thể loại:</strong> <span class="the-loai"><a href="../../HTML/tinh-cam.html">Tình cảm</a></span></p>
+                    <p><strong>Số chương:</strong> 1 </p>
+                    <p><strong>Tình trạng:</strong> <span class="tinh-trang"><a href ="../../HTML/hoan-thanh.html">Hoàn thành</a></span></p>
+
+                    <!-- nút lưu/thích -->
+                    <div class="truyen-actions">
+                        <button id="save-story-button" class="action-button">
+                            <i class='bx bx-bookmark'></i> <span>Lưu truyện</span>
+                        </button>
+                        <button id="like-story-button" class="action-button">
+                            <i class='bx bx-heart'></i> <span>Thích</span>
+                        </button>
+                         <span id="action-feedback" class="action-feedback"></span>
+                    </div>
+                    <!-- cuối nút lưu/thích -->
+
+                </div>
+                <!-- cuối thông tin chi tiết -->
+            </div>
+            <!-- cuối đầu truyện -->
+
+            <!-- tóm tắt -->
+            <div class="truyen-tomtat">
+              <h2>Giới thiệu truyện</h2>
+              <p>Tiểu thuyết "5cm/s" không đơn thuần là một bản sao chép từ phim...</p>
+              <!-- ... (phần còn lại của tóm tắt) ... -->
+              <p>...tìm kiếm hạnh phúc cho riêng mình.</p>
+          </div>
+            <!-- cuối tóm tắt -->
+
+            <!-- danh sách chương -->
+            <div class="truyen-chuong">
+                <h2>Danh sách chương</h2>
+                <ul class="chuong-list">
+                    <li><a href="chuong1.html">Chương 1: 5cm/giây</a></li>
+                    <!-- thêm các chương khác nếu có -->
+                </ul>
+            </div>
+            <!-- cuối danh sách chương -->
+
+        </section>
+        <!-- cuối khu vực thông tin truyện -->
+    </main>
+    <!-- cuối nội dung chính -->
+
+    <!-- tải script -->
+    <script src="../../JS/script.js"></script>
+    <script src="../../JS/story-actions.js"></script>
+    <!-- cuối tải script -->
+
+</body>
+<!-- cuối thân -->
+
+</html>

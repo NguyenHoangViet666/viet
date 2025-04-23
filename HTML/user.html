@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang cá nhân - BetoBook</title>
+    <link rel="stylesheet" href="../CSS/style.css">
+    <link rel="stylesheet" href="../CSS/u-pro.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+    <style>
+        /* Basic styles for admin tables (add to u-pro.css or here) */
+        .admin-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .admin-table th, .admin-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .admin-table th { background-color: #f2f2f2; }
+        .admin-table button { margin-right: 5px; padding: 3px 8px; cursor: pointer; }
+        .admin-form { border: 1px solid #ccc; padding: 15px; margin-top: 15px; background-color: #f9f9f9; display: none; /* Initially hidden */}
+        .admin-form .form-group { margin-bottom: 10px; }
+        .admin-form label { display: block; margin-bottom: 5px; }
+        .admin-form input[type="text"],
+        .admin-form input[type="email"],
+        .admin-form input[type="password"],
+        .admin-form select { width: 95%; padding: 8px; margin-bottom: 5px; }
+        .admin-actions { margin-bottom: 15px; }
+        .admin-actions input[type="text"] { padding: 8px; }
+        .admin-actions button { padding: 8px 12px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="parent">
+
+        <div class="user-info">
+            <span class="avatar"><i class='bx bxs-user-circle'></i></span>
+            <div>
+                 <h2 id="username-display">Đang tải...</h2>
+                 <a href="../index.html" style="font-size: 0.9em; color: #555;">Quay lại trang chủ</a>
+            </div>
+        </div>
+
+
+        <div class="settings nav-section">
+            <h3><i class='bx bx-cog'></i> Cài đặt</h3>
+            <ul>
+                <li><a href="#" data-section="change-password">Đổi mật khẩu</a></li>
+                <li><a href="#" data-section="update-profile">Cập nhật hồ sơ</a></li>
+                <li><a href="#" data-section="notifications">Thông báo</a></li>
+
+            </ul>
+            <div class="logout-button-container">
+                 <button id="logout-button">Đăng xuất</button>
+            </div>
+        </div>
+
+
+        <div class="saved-stories nav-section">
+             <h3><i class='bx bx-bookmark'></i> Truyện đã lưu</h3>
+             <ul>
+                 <li><a href="#" data-section="saved-stories">Xem danh sách</a></li>
+             </ul>
+        </div>
+
+
+
+        <div class="liked-stories nav-section">
+            <h3><i class='bx bx-heart'></i> Truyện đã thích</h3>
+             <ul>
+                  <li><a href="#" data-section="liked-stories">Xem danh sách</a></li>
+             </ul>
+        </div>
+
+
+        <div class="main-content">
+
+            <h2>Chào mừng bạn trở lại!</h2>
+            <p>Chọn một mục từ menu bên trái.</p>
+        </div>
+    </div>
+
+    <script src="../JS/u-pro.js"></script>
+
+</body>
+</html>
