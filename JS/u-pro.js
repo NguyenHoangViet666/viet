@@ -156,32 +156,29 @@ document.addEventListener('DOMContentLoaded', () => {
         let html = '';
         switch (section) {
             case 'change-password':
-                // --- ĐÃ XÓA DÒNG CHÚ Ý ---
                 html = `<h2><i class='bx bx-lock-alt'></i> Đổi mật khẩu</h2>
                         <form id="change-password-form">
                           <div class="form-group"> <label for="current-password">Mật khẩu hiện tại</label> <input type="password" id="current-password" required> </div>
                           <div class="form-group"> <label for="new-password">Mật khẩu mới</label> <input type="password" id="new-password" required> </div>
                           <div class="form-group"> <label for="confirm-password">Xác nhận mật khẩu mới</label> <input type="password" id="confirm-password" required> </div>
-                          <button type="submit" disabled>Lưu thay đổi (Vô hiệu hóa)</button>
+                          <button type="submit" disabled>Lưu thay đổi</button>
                         </form>`;
                 break;
             case 'update-profile':
-                 // --- ĐÃ XÓA DÒNG CHÚ Ý ---
                  html = `<h2><i class='bx bx-user'></i> Cập nhật hồ sơ</h2>
                          <form id="update-profile-form">
                            <div class="form-group"> <label for="profile-email">Email</label> <input type="email" id="profile-email" value="${localStorage.getItem('userEmail') || '(Không có - cần Backend)'}" disabled></div>
                            <div class="form-group"> <label for="profile-username">Tên hiển thị</label> <input type="text" id="profile-username" value="${storedUsername || ''}"> <small>Thay đổi chỉ tạm thời trên trình duyệt này.</small> </div>
                            <div class="form-group"> <label for="profile-avatar">Ảnh đại diện</label> <input type="file" id="profile-avatar" accept="image/*" disabled> <small>(Cần Backend)</small> </div>
-                           <button type="submit" disabled>Lưu thay đổi (Vô hiệu hóa)</button>
+                           <button type="submit" disabled>Lưu thay đổi</button>
                          </form>`;
                  break;
             case 'notifications':
-                 // --- ĐÃ XÓA DÒNG CHÚ Ý ---
                  html = `<h2><i class='bx bx-bell'></i> Thông báo</h2>
                          <form id="notifications-form">
                             <div class="form-group"> <label> <input type="checkbox" name="email-new-chapter"> Nhận email khi có chương mới (Demo) </label> </div>
                             <div class="form-group"> <label> <input type="checkbox" name="email-updates"> Nhận email về cập nhật (Demo) </label> </div>
-                            <button type="submit" disabled>Lưu cài đặt (Vô hiệu hóa)</button>
+                            <button type="submit" disabled>Lưu cài đặt</button>
                          </form>`;
                  break;
             default: html = '<h2>Lỗi</h2><p>Không tìm thấy mục cài đặt này.</p>';
