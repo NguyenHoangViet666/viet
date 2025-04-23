@@ -167,17 +167,17 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'update-profile':
                  html = `<h2><i class='bx bx-user'></i> Cập nhật hồ sơ</h2>
                          <form id="update-profile-form">
-                           <div class="form-group"> <label for="profile-email">Email</label> <input type="email" id="profile-email" value="${localStorage.getItem('userEmail') || '(Không có - cần Backend)'}" disabled></div>
-                           <div class="form-group"> <label for="profile-username">Tên hiển thị</label> <input type="text" id="profile-username" value="${storedUsername || ''}"> <small>Thay đổi chỉ tạm thời trên trình duyệt này.</small> </div>
-                           <div class="form-group"> <label for="profile-avatar">Ảnh đại diện</label> <input type="file" id="profile-avatar" accept="image/*" disabled> <small>(Cần Backend)</small> </div>
+                           <div class="form-group"> <label for="profile-email">Email</label> <input type="email" id="profile-email" value="${localStorage.getItem('userEmail') || }" disabled></div>
+                           <div class="form-group"> <label for="profile-username">Tên hiển thị</label> <input type="text" id="profile-username" value="${storedUsername || ''}"></div>
+                           <div class="form-group"> <label for="profile-avatar">Ảnh đại diện</label> <input type="file" id="profile-avatar" accept="image/*" disabled></div>
                            <button type="submit" disabled>Lưu thay đổi</button>
                          </form>`;
                  break;
             case 'notifications':
                  html = `<h2><i class='bx bx-bell'></i> Thông báo</h2>
                          <form id="notifications-form">
-                            <div class="form-group"> <label> <input type="checkbox" name="email-new-chapter"> Nhận email khi có chương mới (Demo) </label> </div>
-                            <div class="form-group"> <label> <input type="checkbox" name="email-updates"> Nhận email về cập nhật (Demo) </label> </div>
+                            <div class="form-group"> <label> <input type="checkbox" name="email-new-chapter"> Nhận email khi có chương mới</label> </div>
+                            <div class="form-group"> <label> <input type="checkbox" name="email-updates"> Nhận email về cập nhật</label> </div>
                             <button type="submit" disabled>Lưu cài đặt</button>
                          </form>`;
                  break;
