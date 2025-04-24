@@ -1,5 +1,3 @@
-// --- START OF FILE u-pro.js ---
-
 document.addEventListener('DOMContentLoaded', () => {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
     if (isLoggedIn !== 'true') {
@@ -713,5 +711,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 });
-
-// --- END OF FILE u-pro.js ---
